@@ -29,7 +29,7 @@ public class MovieDetails extends AppCompatActivity {
         Movie movie = (Movie) getIntent().getSerializableExtra("movie");
 
 
-        //retrieve all fields and give them value
+        //retrieve all fields and set their value
         tvTitle = ButterKnife.findById(this, R.id.title);
         tvTitle.setText(movie.getOriginalTitle());
 

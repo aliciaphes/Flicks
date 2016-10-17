@@ -21,15 +21,19 @@ public class Movie implements Serializable{
     double rating;
 
 
+    //constructor to retrieve all the attributes we need
     public Movie(JSONObject jsonObject) throws JSONException{
-        posterPath = jsonObject.getString("poster_path");
-        backdropPath = jsonObject.getString("backdrop_path");
+        posterPath    = jsonObject.getString("poster_path");
+        backdropPath  = jsonObject.getString("backdrop_path");
         originalTitle = jsonObject.getString("original_title");
-        overview = jsonObject.getString("overview");
-        rating = jsonObject.getDouble("vote_average");
-        releaseDate = jsonObject.getString("release_date");
+        overview      = jsonObject.getString("overview");
+        rating        = jsonObject.getDouble("vote_average");
+        releaseDate   = jsonObject.getString("release_date");
 
     }
+
+
+    //getters
 
     public String getOriginalTitle() {
         return originalTitle;
@@ -57,6 +61,7 @@ public class Movie implements Serializable{
     }
 
 
+    //convert Json object into ArrayList
     public static ArrayList<Movie> fromJSONArray(JSONArray array){
         ArrayList<Movie> results = new ArrayList<>();
 

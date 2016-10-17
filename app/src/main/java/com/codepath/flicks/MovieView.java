@@ -75,6 +75,8 @@ public class MovieView extends RelativeLayout {
         }
     }
 
+
+    //this is a TEST method to be deleted once the varying layouts config. is set up
     public void depending(Movie movie){
         String imageToLoad = null;
 
@@ -109,6 +111,7 @@ public class MovieView extends RelativeLayout {
     }
 
 
+    //display data retrieved from the movie
     public void setItem(Movie movie) {
 
         //depending(movie);
@@ -134,6 +137,7 @@ public class MovieView extends RelativeLayout {
 
     }
 
+    //reduce synopsis to tweet-size
     private String truncateOverview(String overview) {
         if(overview.length() > 140){
 

@@ -18,7 +18,6 @@ import java.util.List;
 public class MovieArrayAdapter extends ArrayAdapter<Movie>{
 
     public MovieArrayAdapter(Context context, List<Movie> movies) {
-        //super(context, android.R.layout.simple_list_item_1, movies);
         super(context, 0, movies);
     }
 
@@ -32,7 +31,6 @@ public class MovieArrayAdapter extends ArrayAdapter<Movie>{
         if(movieView == null){
             movieView = MovieView.inflate(parent);
         }
-        //movieView.setItem(getItem(position));
         movieView.setItem(movie);
         return movieView;
     }

@@ -42,15 +42,14 @@ public class MovieActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie);
 
+        //set up adapter
         lvMovies = ButterKnife.findById(this, R.id.lvMovies);
         movies = new ArrayList<>();
         movieAdapter = new MovieArrayAdapter(this, movies);
         lvMovies.setAdapter(movieAdapter);
 
-        // Lookup the swipe container view
+        // setup refresh listener which triggers new data loading
         swipeContainer = ButterKnife.findById(this, R.id.swipeContainer);
-
-        // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
 
             @Override
@@ -94,9 +93,10 @@ public class MovieActivity extends AppCompatActivity {
         });
     }
 
-    
+
     private void fetchData(AsyncHttpClient client) {
 
+        //make sure there's access to the web
         boolean connectivity = checkForConnectivity();
 
         if(!connectivity){
