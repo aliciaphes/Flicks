@@ -1,2 +1,0 @@
-# Flicks
-Assignment 1
