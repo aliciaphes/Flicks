@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.codepath.flicks.models.Movie;
 import com.squareup.picasso.Picasso;
 
+import butterknife.ButterKnife;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
 public class MovieDetails extends AppCompatActivity {
@@ -29,19 +30,19 @@ public class MovieDetails extends AppCompatActivity {
 
 
         //retrieve all fields and give them value
-        tvTitle = (TextView) findViewById(R.id.title);
+        tvTitle = ButterKnife.findById(this, R.id.title);
         tvTitle.setText(movie.getOriginalTitle());
 
-        tvReleaseDate = (TextView) findViewById(R.id.release_date);
+        tvReleaseDate = ButterKnife.findById(this, R.id.release_date);
         tvReleaseDate.setText("Release date: " + movie.getReleaseDate());
 
-        tvSynopsis = (TextView) findViewById(R.id.synopsis);
+        tvSynopsis = ButterKnife.findById(this, R.id.synopsis);
         tvSynopsis.setText(movie.getOverview());
 
-        ratingBar = (RatingBar) findViewById(R.id.rating_bar);
+        ratingBar = ButterKnife.findById(this, R.id.rating_bar);
         ratingBar.setRating((float)movie.getRating());
 
-        ivImage = (ImageView) findViewById(R.id.ivMovieImage);
+        ivImage = ButterKnife.findById(this, R.id.ivMovieImage);
         Picasso.with(this).load(movie.getBackdropPath())
                 .transform(new RoundedCornersTransformation(20, 20))
                 .placeholder(R.drawable.placeholder)

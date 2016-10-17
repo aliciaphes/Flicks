@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.codepath.flicks.models.Movie;
 import com.squareup.picasso.Picasso;
 
+import butterknife.ButterKnife;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
 import static com.codepath.flicks.R.layout.item_movie;
@@ -44,9 +45,10 @@ public class MovieView extends RelativeLayout {
 
 
     private void setupChildren() {
-        ivPicture = (ImageView) findViewById(R.id.ivMovieImage);
-        tvTitle = (TextView) findViewById(R.id.tvTitle);
-        tvOverview = (TextView) findViewById(R.id.tvOverview);
+
+        ivPicture  = ButterKnife.findById(this, R.id.ivMovieImage);
+        tvTitle    = ButterKnife.findById(this, R.id.tvTitle);
+        tvOverview = ButterKnife.findById(this, R.id.tvOverview);
     }
 
 

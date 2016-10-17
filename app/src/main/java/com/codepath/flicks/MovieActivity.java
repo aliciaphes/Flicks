@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import butterknife.ButterKnife;
 import cz.msebera.android.httpclient.Header;
 
 public class MovieActivity extends AppCompatActivity {
@@ -41,13 +42,13 @@ public class MovieActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie);
 
-        lvMovies = (ListView) findViewById(R.id.lvMovies);
+        lvMovies = ButterKnife.findById(this, R.id.lvMovies);
         movies = new ArrayList<>();
         movieAdapter = new MovieArrayAdapter(this, movies);
         lvMovies.setAdapter(movieAdapter);
 
         // Lookup the swipe container view
-        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        swipeContainer = ButterKnife.findById(this, R.id.swipeContainer);
 
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
@@ -93,7 +94,7 @@ public class MovieActivity extends AppCompatActivity {
         });
     }
 
-
+    
     private void fetchData(AsyncHttpClient client) {
 
         boolean connectivity = checkForConnectivity();
