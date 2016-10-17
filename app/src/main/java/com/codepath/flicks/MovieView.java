@@ -79,7 +79,7 @@ public class MovieView extends RelativeLayout {
         // Two possible views depending on popularity:
         // - image(poster/backdrop depending on orientation) + title + overview --> item_movie.xml
         // - full backdrop (for both orientations) --> item_popular_movie.xml
-        if (movie.getPopularity() <= 5.0) {
+        if (movie.getRating() <= 5.0) {
             LayoutInflater.from(getContext()).inflate(item_movie, this, true);
             setupChildren();
 
@@ -94,7 +94,7 @@ public class MovieView extends RelativeLayout {
             drawImage(imageToLoad);
 
             tvTitle.setText(movie.getOriginalTitle());
-            tvOverview.setText(movie.getOverview());
+            tvOverview.setText(truncateOverview(movie.getOverview()));
 
         } else {
             LayoutInflater.from(getContext()).inflate(R.layout.item_popular_movie, this, true);
@@ -128,8 +128,16 @@ public class MovieView extends RelativeLayout {
         }
 
         tvTitle.setText(movie.getOriginalTitle());
-        tvOverview.setText(movie.getOverview());
+        tvOverview.setText(truncateOverview(movie.getOverview()));
 
+    }
+
+    private String truncateOverview(String overview) {
+        if(overview.length() > 140){
+
+            overview = overview.substring(0, 137) + "...";
+        }
+        return overview;
     }
 
 }
