@@ -14,11 +14,13 @@ import com.squareup.picasso.Picasso;
 
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
+import static com.codepath.flicks.R.layout.item_movie;
+
 /**
  * Created by Alicia on 15-Oct-16.
  */
 
-public class MovieView extends RelativeLayout{
+public class MovieView extends RelativeLayout {
 
     private ImageView ivPicture;
     private TextView tvTitle;
@@ -34,15 +36,16 @@ public class MovieView extends RelativeLayout{
 
     public MovieView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        //LayoutInflater.from(context).inflate(R.layout.item_movie2, this, true);
-        LayoutInflater.from(context).inflate(R.layout.item_movie, this, true);
+        //LayoutInflater.from(context).inflate(R.layout.item_movie2, this, true);//DELETE THIS LINE
+
+        LayoutInflater.from(context).inflate(item_movie, this, true);
         setupChildren();
     }
 
 
     private void setupChildren() {
         ivPicture = (ImageView) findViewById(R.id.ivMovieImage);
-        tvTitle= (TextView) findViewById(R.id.tvTitle);
+        tvTitle = (TextView) findViewById(R.id.tvTitle);
         tvOverview = (TextView) findViewById(R.id.tvOverview);
     }
 
@@ -53,7 +56,60 @@ public class MovieView extends RelativeLayout{
         return movieView;
     }
 
+
+    private int getOrientation() {
+        return getContext().getResources().getConfiguration().orientation;
+    }
+
+
+
+    private void drawImage(String path) {
+        if (path != null && ivPicture != null) {
+            Picasso.with(getContext()).load(path)
+                    //.fit().centerCrop()
+                    .transform(new RoundedCornersTransformation(20, 20))
+                    .placeholder(R.drawable.placeholder)
+                    .into(ivPicture);
+        }
+    }
+
+    public void depending(Movie movie){
+        String imageToLoad = null;
+
+        // Two possible views depending on popularity:
+        // - image(poster/backdrop depending on orientation) + title + overview --> item_movie.xml
+        // - full backdrop (for both orientations) --> item_popular_movie.xml
+        if (movie.getPopularity() <= 5.0) {
+            LayoutInflater.from(getContext()).inflate(item_movie, this, true);
+            setupChildren();
+
+            //determine which image to load depending on screen orientation:
+            int orientation = getOrientation();
+            if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+                imageToLoad = movie.getPosterPath();
+            } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                imageToLoad = movie.getBackdropPath();
+            }
+
+            drawImage(imageToLoad);
+
+            tvTitle.setText(movie.getOriginalTitle());
+            tvOverview.setText(movie.getOverview());
+
+        } else {
+            LayoutInflater.from(getContext()).inflate(R.layout.item_popular_movie, this, true);
+            setupChildren();
+            imageToLoad = movie.getBackdropPath();
+            drawImage(imageToLoad);
+            //tvTitle.setText("DUMMY TITLE");
+            //tvOverview.setText("DUMMY TEXT");
+        }
+    }
+
+
     public void setItem(Movie movie) {
+
+        //depending(movie);
 
         //determine which image to load depending on screen orientation:
         String imageToLoad = null;
@@ -73,6 +129,7 @@ public class MovieView extends RelativeLayout{
 
         tvTitle.setText(movie.getOriginalTitle());
         tvOverview.setText(movie.getOverview());
+
     }
 
 }
