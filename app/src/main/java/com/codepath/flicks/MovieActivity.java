@@ -1,10 +1,17 @@
 package com.codepath.flicks;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.codepath.flicks.adapters.MovieArrayAdapter;
 import com.codepath.flicks.models.Movie;
@@ -23,7 +30,7 @@ public class MovieActivity extends AppCompatActivity {
 
     private ArrayList<Movie> movies;
     private MovieArrayAdapter movieAdapter;
-    private ListView lvItems;
+    private ListView lvMovies;
     private SwipeRefreshLayout swipeContainer;
     private final AsyncHttpClient client = new AsyncHttpClient();
     private final String URL = "https://api.themoviedb.org/3/movie/now_playing?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed";
@@ -34,11 +41,10 @@ public class MovieActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie);
 
-        lvItems = (ListView) findViewById(R.id.lvMovies);
+        lvMovies = (ListView) findViewById(R.id.lvMovies);
         movies = new ArrayList<>();
         movieAdapter = new MovieArrayAdapter(this, movies);
-        lvItems.setAdapter(movieAdapter);
-
+        lvMovies.setAdapter(movieAdapter);
 
         // Lookup the swipe container view
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
@@ -65,37 +71,74 @@ public class MovieActivity extends AppCompatActivity {
         //fetchHardcodedData();
         fetchData(client);
 
+        setUpClickListener();
+
     }
 
-
-    private void fetchData(AsyncHttpClient client) {
-        client.get(URL, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                JSONArray movieJsonResults = null;
-
-                try {
-                    movieJsonResults = response.getJSONArray("results");
-                    movies.addAll(Movie.fromJSONArray(movieJsonResults));
-                    movieAdapter.notifyDataSetChanged();
-
-                    //signal refresh has finished:
-                    swipeContainer.setRefreshing(false);
-
-                    Log.d("DEBUG", movies.toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
+    private void setUpClickListener() {
+        lvMovies.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                super.onFailure(statusCode, headers, responseString, throwable);
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //view is an instance of MovieView
+                //Expose details of movie (ratings (out of 10), popularity, and synopsis
+                //ratings using RatingBar
+                Intent detailsIntent = new Intent(MovieActivity.this, MovieDetails.class);
+
+                // put movie as "extra" into the bundle for access in the second activity
+                detailsIntent.putExtra("movie", movies.get(position));
+                // bring up the second activity
+                startActivity(detailsIntent);
             }
         });
     }
 
 
+    private void fetchData(AsyncHttpClient client) {
+
+        boolean connectivity = checkForConnectivity();
+
+        if(!connectivity){
+            Toast.makeText(this, "Unable to continue, no connection detected", Toast.LENGTH_LONG).show();
+        }
+
+        else{
+            client.get(URL, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    JSONArray movieJsonResults = null;
+
+                    try {
+                        movieJsonResults = response.getJSONArray("results");
+                        movies.addAll(Movie.fromJSONArray(movieJsonResults));
+                        movieAdapter.notifyDataSetChanged();
+
+                        //signal refresh has finished:
+                        swipeContainer.setRefreshing(false);
+
+                        Log.d("DEBUG", movies.toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                    super.onFailure(statusCode, headers, responseString, throwable);
+                }
+            });
+        }
+
+
+
+    }
+
+    private boolean checkForConnectivity() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
+    }
 
 
 //    private void fetchHardcodedData() throws JSONException {
