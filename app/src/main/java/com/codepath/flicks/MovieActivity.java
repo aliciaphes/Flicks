@@ -1,9 +1,6 @@
 package com.codepath.flicks;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.codepath.flicks.Utils.Utils;
 import com.codepath.flicks.adapters.MovieArrayAdapter;
 import com.codepath.flicks.models.Movie;
 import com.loopj.android.http.AsyncHttpClient;
@@ -33,8 +31,11 @@ public class MovieActivity extends AppCompatActivity {
     private MovieArrayAdapter movieAdapter;
     private ListView lvMovies;
     private SwipeRefreshLayout swipeContainer;
-    private final AsyncHttpClient client = new AsyncHttpClient();
-    private final String URL = "https://api.themoviedb.org/3/movie/now_playing?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed";
+
+    //private final AsyncHttpClient client = new AsyncHttpClient();
+
+
+    private final String URL = Utils.getBaseURL()+"now_playing?api_key="+Utils.getMovieDBAPIkey();
 
 
     @Override
@@ -50,7 +51,7 @@ public class MovieActivity extends AppCompatActivity {
 
         // setup refresh listener which triggers new data loading
         swipeContainer = ButterKnife.findById(this, R.id.swipeContainer);
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
             @Override
             public void onRefresh() {
@@ -59,7 +60,7 @@ public class MovieActivity extends AppCompatActivity {
                 movies.clear();
                 movieAdapter.notifyDataSetChanged();
 
-                fetchData(client);
+                fetchData(Utils.getClient());
                 //fetchHardcodedData();
 
                 //signal refresh has finished:
@@ -69,7 +70,7 @@ public class MovieActivity extends AppCompatActivity {
 
 
         //fetchHardcodedData();
-        fetchData(client);
+        fetchData(Utils.getClient());
 
         setUpClickListener();
 
@@ -83,12 +84,22 @@ public class MovieActivity extends AppCompatActivity {
                 //view is an instance of MovieView
                 //Expose details of movie (ratings (out of 10), popularity, and synopsis
                 //ratings using RatingBar
-                Intent detailsIntent = new Intent(MovieActivity.this, MovieDetails.class);
+                Movie movie = movies.get(position);
 
-                // put movie as "extra" into the bundle for access in the second activity
-                detailsIntent.putExtra("movie", movies.get(position));
-                // bring up the second activity
-                startActivity(detailsIntent);
+                Intent intent = null;
+
+                if (movie.getRating() > 5.0) {
+                    //launch video activity
+                    intent = new Intent(MovieActivity.this, YouTubeActivity.class);
+                } else {
+                    intent = new Intent(MovieActivity.this, MovieDetails.class);
+                }
+
+                if(intent != null){
+                    // put movie as "extra" into the bundle for access in the second activity
+                    intent.putExtra("movie", movie);
+                    startActivity(intent);
+                }
             }
         });
     }
@@ -97,13 +108,11 @@ public class MovieActivity extends AppCompatActivity {
     private void fetchData(AsyncHttpClient client) {
 
         //make sure there's access to the web
-        boolean connectivity = checkForConnectivity();
+        boolean connectivity = Utils.checkForConnectivity(this);
 
-        if(!connectivity){
+        if (!connectivity) {
             Toast.makeText(this, "Unable to continue, no connection detected", Toast.LENGTH_LONG).show();
-        }
-
-        else{
+        } else {
             client.get(URL, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -129,17 +138,9 @@ public class MovieActivity extends AppCompatActivity {
                 }
             });
         }
-
-
-
     }
 
-    private boolean checkForConnectivity() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
-    }
+
 
 
 //    private void fetchHardcodedData() throws JSONException {
@@ -164,7 +165,6 @@ public class MovieActivity extends AppCompatActivity {
 //
 //
 //    }
-
 
 
 }

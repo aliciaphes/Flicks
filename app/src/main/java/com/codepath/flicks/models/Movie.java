@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 public class Movie implements Serializable{
 
+    int    id;
     String posterPath;
     String backdropPath;
     String originalTitle;
@@ -23,17 +24,21 @@ public class Movie implements Serializable{
 
     //constructor to retrieve all the attributes we need
     public Movie(JSONObject jsonObject) throws JSONException{
+        id            = jsonObject.getInt("id");
         posterPath    = jsonObject.getString("poster_path");
         backdropPath  = jsonObject.getString("backdrop_path");
         originalTitle = jsonObject.getString("original_title");
         overview      = jsonObject.getString("overview");
         rating        = jsonObject.getDouble("vote_average");
         releaseDate   = jsonObject.getString("release_date");
-
     }
 
 
     //getters
+
+    public int getID() {
+        return id;
+    }
 
     public String getOriginalTitle() {
         return originalTitle;
