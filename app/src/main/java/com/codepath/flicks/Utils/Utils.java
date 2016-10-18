@@ -1,4 +1,4 @@
-package com.codepath.flicks.Utils;
+package com.codepath.flicks.utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

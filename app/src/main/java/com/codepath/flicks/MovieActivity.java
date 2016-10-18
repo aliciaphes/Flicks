@@ -10,7 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.codepath.flicks.Utils.Utils;
+import com.codepath.flicks.utils.Utils;
 import com.codepath.flicks.adapters.MovieArrayAdapter;
 import com.codepath.flicks.models.Movie;
 import com.loopj.android.http.AsyncHttpClient;

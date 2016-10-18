@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.codepath.flicks.Utils.Utils;
+import com.codepath.flicks.utils.Utils;
 import com.codepath.flicks.models.Movie;
 import com.codepath.flicks.models.Trailer;
 import com.google.android.youtube.player.YouTubeBaseActivity;
